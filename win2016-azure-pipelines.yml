@@ -189,7 +189,7 @@ jobs:
   - task: GithubRelease@0
     inputs:
       gitHubConnection: 'oiio-python-releases'
-      repositoryName: 'fredrikaverpil/oiio-python'
+      repositoryName: 'ArchPlatform/oiio-python'
       action: 'edit' # Options: create, edit, discard
       target: '$(build.sourceVersion)' # Required when action == create || action == edit
       tagSource: 'Git tag' # Required when action == create. Options: auto, manual
