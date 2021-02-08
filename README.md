@@ -4,9 +4,9 @@ OpenImageIO Python 3.x package.
 
 | Build pipeline | CI Status |
 | ------------- | ------------- |
-| Windows Server 2016 | [![Build Status](https://fredrikaverpil.visualstudio.com/oiio-python/_apis/build/status/oiio-python-win2016?branchName=master)](https://fredrikaverpil.visualstudio.com/oiio-python/_build/latest?definitionId=5?branchName=master) |
-| Ubuntu 16.04<sup>1</sup> | [![Build Status](https://fredrikaverpil.visualstudio.com/oiio-python/_apis/build/status/oiio-python-ubuntu16.04?branchName=master)](https://fredrikaverpil.visualstudio.com/oiio-python/_build/latest?definitionId=6?branchName=master) |
-| macOS 10.13 | [![Build Status](https://fredrikaverpil.visualstudio.com/oiio-python/_apis/build/status/oiio-python-macOS-10.13?branchName=master)](https://fredrikaverpil.visualstudio.com/oiio-python/_build/latest?definitionId=7&branchName=master) |
+| Windows Server 2016 | [![Build Status](https://ArchPlatform.visualstudio.com/oiio-python/_apis/build/status/oiio-python-win2016?branchName=master)](https://ArchPlatform.visualstudio.com/oiio-python/_build/latest?definitionId=5?branchName=master) |
+| Ubuntu 16.04<sup>1</sup> | [![Build Status](https://ArchPlatform.visualstudio.com/oiio-python/_apis/build/status/oiio-python-ubuntu16.04?branchName=master)](https://ArchPlatform.visualstudio.com/oiio-python/_build/latest?definitionId=6?branchName=master) |
+| macOS 10.13 | [![Build Status](https://ArchPlatform.visualstudio.com/oiio-python/_apis/build/status/oiio-python-macOS-10.13?branchName=master)](https://ArchPlatform.visualstudio.com/oiio-python/_build/latest?definitionId=7&branchName=master) |
 
 <sup>1</sup> Should also work on CentOS 7 for example.
 
