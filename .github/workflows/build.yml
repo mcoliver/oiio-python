@@ -26,12 +26,13 @@ jobs:
         sudo apt-get install libpng-dev
         sudo apt-get install libtiff-dev
         sudo apt-get install libopenexr-dev
+        sudo apt-get install libraw-dev
         git clone https://github.com/OpenImageIO/oiio.git        
         pip3 install "pybind11[global]"
         pip3 install numpy
         cd oiio
         git checkout v2.2.11.1
-        make
+        make VERBOSE=1 STOP_ON_WARNING=0
       shell: bash
       env:
         OIIO_PYTHON_VERSION: "3.7"
