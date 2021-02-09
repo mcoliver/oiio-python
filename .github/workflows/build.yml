@@ -13,14 +13,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ['3.7']
+        python_version_major: ['3']
+        python_version_minor: ['7']
         os: ['ubuntu-16.04']
         oiio_version: ["2.2.10.0"]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python }}
+          python-version: ${{ matrix.python_version_major }}.${{ matrix.python_version_minor }}
           architecture: x64
       - name: build oiio
         run: |
@@ -45,15 +46,16 @@ jobs:
           export CXXFLAGS=-Werror=unused-variable
           cmake .. -DCMAKE_CXX_FLAGS="-Wno-error=unused-variable"
           make VERBOSE=1 STOP_ON_WARNING=0
+          make install
         shell: bash
         env:
-          OIIO_PYTHON_VERSION: ${{ matrix.python }}
+          OIIO_PYTHON_VERSION: ${{ matrix.python_version_major }}.${{ matrix.python_version_minor }}
 
       - name: Inject variable values into setup.py
         run: |
           cd src/python
           sed -i'' 's/PACKAGE_VERSION/${{ matrix.oiio_version }}/g' setup.py
-          sed -i'' 's/PYTHON_VERSION/${{ matrix.python }}/g' setup.py
+          sed -i'' 's/PYTHON_VERSION/${{ matrix.python_version_major }}.${{ matrix.python_version_minor }}/g' setup.py
           sed -i'' 's/OS_NAME/Microsoft :: POSIX :: Linux/g' setup.py
           cat setup.py
       - name: Copy files into oiio Python package
@@ -64,13 +66,14 @@ jobs:
           mkdir ${GITHUB_WORKSPACE}/artifacts
           export DIST_DIR="${GITHUB_WORKSPACE}/artifacts"
           cd src/python
-          python3.7 -m pip install -U pip
-          pip3.7 install -U setuptools wheel
-          python3 setup.py bdist_wheel --python-tag=py37 --plat-name=linux_x86_64 --dist-dir="$DIST_DIR"
+          python${{ matrix.python_version_major }}.${{ matrix.python_version_minor }} -m pip install -U pip
+          pip${{ matrix.python_version_major }}.${{ matrix.python_version_minor }} install -U setuptools wheel auditwheel
+          python3 setup.py bdist_wheel --python-tag=cp${{ matrix.python_version_major }}${{ matrix.python_version_minor }} --plat-name=linux_x86_64 --dist-dir="$DIST_DIR"
           cd $DIST_DIR
           ls -lah
-          echo ::set-output name=asset-name::oiio-2.2.10.0-py37-none-linux_x86_64.whl
-          echo ::set-output name=asset-path::${GITHUB_WORKSPACE}/artifacts/oiio-2.2.10.0-py37-none-linux_x86_64.whl
+          auditwheel repair "oiio-${{ matrix.oiio_version }}-cp${{ matrix.python_version_major }}${{ matrix.python_version_minor }}-none-linux_x86_64.whl
+          echo ::set-output name=asset-name::oiio-${{ matrix.oiio_version }}-cp${{ matrix.python_version_major }}${{ matrix.python_version_minor }}-none-linux_x86_64.whl
+          echo ::set-output name=asset-path::${GITHUB_WORKSPACE}/artifacts/oiio-${{ matrix.oiio_version }}-cp${{ matrix.python_version_major }}${{ matrix.python_version_minor }}-none-linux_x86_64.whl
       - name: Generate Upload URL
         id: gen-upload-url
         run: |
