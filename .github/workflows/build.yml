@@ -1,90 +1,89 @@
 # Build openimageio for python
 
 on:
-  push:
+  release:
+    types: [published]
 
-  workflow_dispatch:
 
 
 jobs:
-
-  linux:
-    runs-on: ubuntu-16.04
-
+  build:
+    name: Test on ${{ matrix.os }} with Python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.7']
+        os: ['ubuntu-16.04']
+        oiio_version: ["2.2.10.0"]
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: "3.7"
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+          architecture: x64
+      - name: build oiio
+        run: |
+          sudo apt-get install libboost-all-dev
+          sudo apt-get install libjpeg-dev
+          sudo apt-get install zlib1g-dev
+          sudo apt-get install libpng-dev
+          sudo apt-get install libtiff-dev
+          sudo apt-get install libopenexr-dev
+          sudo apt-get install libraw-dev
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+          sudo apt-get update -y
+          sudo apt-get install g++-7 -y
+          git clone https://github.com/OpenImageIO/oiio.git        
+          pip3 install "pybind11[global]"
+          pip3 install numpy
+          cd oiio
+          git checkout "v${{ matrix.oiio_version }}"
+          mkdir build
+          cd build
+          export CFLAGS=-Werror=unused-variable
+          export CXXFLAGS=-Werror=unused-variable
+          cmake .. -DCMAKE_CXX_FLAGS="-Wno-error=unused-variable"
+          make VERBOSE=1 STOP_ON_WARNING=0
+        shell: bash
+        env:
+          OIIO_PYTHON_VERSION: ${{ matrix.python }}
 
-    # Build oiio
-    - name: Build oiio
-      run: |
-        sudo apt-get install libboost-all-dev
-        sudo apt-get install libjpeg-dev
-        sudo apt-get install zlib1g-dev
-        sudo apt-get install libpng-dev
-        sudo apt-get install libtiff-dev
-        sudo apt-get install libopenexr-dev
-        sudo apt-get install libraw-dev
-        sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-        sudo apt-get update -y
-        sudo apt-get install g++-7 -y
-        git clone https://github.com/OpenImageIO/oiio.git        
-        pip3 install "pybind11[global]"
-        pip3 install numpy
-        cd oiio
-        git checkout v2.2.10.0
-        mkdir build
-        cd build
-        export CFLAGS=-Werror=unused-variable
-        export CXXFLAGS=-Werror=unused-variable
-        cmake .. -DCMAKE_CXX_FLAGS="-Wno-error=unused-variable"
-        gcc --version
-        make VERBOSE=1 STOP_ON_WARNING=0
-      shell: bash
-      env:
-        OIIO_PYTHON_VERSION: "3.7"
-
-    - name: Inject variable values into setup.py
-      run: |
-        cd src/python
-        sed -i'' 's/PACKAGE_VERSION/2.2.10.0/g' setup.py
-        sed -i'' 's/PYTHON_VERSION/3.7.9/g' setup.py
-        sed -i'' 's/OS_NAME/Microsoft :: POSIX :: Linux/g' setup.py
-        cat setup.py
-
-    - name: Show contents
-      run: |
-        ls -lah
-        cd oiio
-        echo "oiio"
-        ls -lah
-        cd build
-        echo "oiio/build"
-        ls -lah 
-        echo "oiio/ext"
-        cd ../ext
-        ls -lah 
-        echo "oiio/build/lib"
-        cd ../build/lib
-        ls -lah
-        echo "oiio/build/lib/python"
-        cd python
-        ls -lah
-      shell: bash
-    - name: Copy files into oiio Python package
-      run: |
-        cp oiio/build/lib/python/site-packages/*.so src/python/oiio
-    - name: Build wheel
-      run: |
-        mkdir dist
-        export DIST_DIR="$GITHUB_WORKSPACE/dist"
-        cd src/python
-        python3.7 -m pip install -U pip
-        pip3.7 install -U setuptools wheel
-        python3 setup.py bdist_wheel --python-tag=37 --plat-name=linux_x86_64 --dist-dir="$DIST_DIR"
-        cd $DIST_DIR
-        ls -lah
-
-      
+      - name: Inject variable values into setup.py
+        run: |
+          cd src/python
+          sed -i'' 's/PACKAGE_VERSION/${{ matrix.oiio_version }}/g' setup.py
+          sed -i'' 's/PYTHON_VERSION/${{ matrix.python }}/g' setup.py
+          sed -i'' 's/OS_NAME/Microsoft :: POSIX :: Linux/g' setup.py
+          cat setup.py
+      - name: Copy files into oiio Python package
+        run: |
+          cp oiio/build/lib/python/site-packages/*.so src/python/oiio
+      - name: Build wheel
+        run: |
+          mkdir ${GITHUB_WORKSPACE}/artifacts
+          export DIST_DIR="${GITHUB_WORKSPACE}/artifacts"
+          cd src/python
+          python3.7 -m pip install -U pip
+          pip3.7 install -U setuptools wheel
+          python3 setup.py bdist_wheel --python-tag=py37 --plat-name=linux_x86_64 --dist-dir="$DIST_DIR"
+          cd $DIST_DIR
+          ls -lah
+          echo ::set-output name=asset-name::oiio-2.2.10.0-py37-none-linux_x86_64.whl
+          echo ::set-output name=asset-path::${GITHUB_WORKSPACE}/artifacts/oiio-2.2.10.0-py37-none-linux_x86_64.whl
+      - name: Generate Upload URL
+        id: gen-upload-url
+        run: |
+          sudo apt-get install jq;
+          RELEASE_ID=$(jq --raw-output '.release.id' $GITHUB_EVENT_PATH);
+          echo ::set-output name=upload-url::https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/assets
+      - name: Uplopad Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+            upload_url: ${{ steps.gen-upload-url.outputs.upload-url }}?name=${{ steps.build-zip.outputs.asset-name }}
+            asset_path: ${{ steps.build-zip.outputs.asset-path }}
+            asset_name: ${{ steps.build-zip.outputs.asset-name }}
+            asset_content_type: application/zip
