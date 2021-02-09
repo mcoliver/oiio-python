@@ -26,11 +26,11 @@ jobs:
         sudo apt-get install libpng-dev
         sudo apt-get install libtiff-dev
         sudo apt-get install libopenexr-dev
-        git clone https://github.com/OpenImageIO/oiio.git
-        git checkout v2.2.11.1
+        git clone https://github.com/OpenImageIO/oiio.git        
         pip3 install "pybind11[global]"
         pip3 install numpy
         cd oiio
+        git checkout v2.2.11.1
         make
       shell: bash
       env:
