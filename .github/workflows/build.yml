@@ -69,13 +69,13 @@ jobs:
         echo "oiio/build/lib"
         cd ../build/lib
         ls -lah
-        cd dist
-        echo "oiio/build/dist"
+        echo "oiio/build/lib/python"
+        cd ../build/lib/python
         ls -lah
       shell: bash
     - name: Copy files into oiio Python package
       run: |
-        cp oiio/dist/lib/python3.7/site-packages/*.so src/python/oiio
+        cp oiio/build/lib/python/site-packages/*.so src/python/oiio
     - name: Build wheel
       run: |
         mkdir dist
