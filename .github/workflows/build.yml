@@ -27,6 +27,9 @@ jobs:
         sudo apt-get install libtiff-dev
         sudo apt-get install libopenexr-dev
         sudo apt-get install libraw-dev
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+        sudo apt-get update -y
+        sudo apt-get install g++-7 -y
         git clone https://github.com/OpenImageIO/oiio.git        
         pip3 install "pybind11[global]"
         pip3 install numpy
