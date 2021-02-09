@@ -46,10 +46,34 @@ jobs:
       env:
         OIIO_PYTHON_VERSION: "3.7"
 
+    - name: Inject variable values into setup.py
+      run: |
+        cd src/python
+        sed -i'' 's/PACKAGE_VERSION/2.2.10.0/g' setup.py
+        sed -i'' 's/PYTHON_VERSION/3.7.9/g' setup.py
+        sed -i'' 's/OS_NAME/Microsoft :: POSIX :: Linux/g' setup.py
+        cat setup.py
 
     - name: Show contents
       run: |
         ls -lah
+        cd oiio
+        ls -lah
         cd dist
         ls -lah
       shell: bash
+    - name: Copy files into oiio Python package
+      run: |
+        cp oiio/dist/lib/python3.7/site-packages/*.so src/python/oiio
+    - name: Build wheel
+      run: |
+        mkdir dist
+        export DIST_DIR="$(PWD)/dist"
+        cd src/python
+        python3.7 -m pip install -U pip
+        pip3.7 install -U setuptools wheel
+        python3 setup.py bdist_wheel --python-tag=37 --plat-name=linux_x86_64 --dist-dir="$DIST_DIR"
+        cd $DIST_DIR
+        ls -lah
+
+      
