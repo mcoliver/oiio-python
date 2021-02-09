@@ -46,7 +46,7 @@ jobs:
           export CXXFLAGS=-Werror=unused-variable
           cmake .. -DCMAKE_CXX_FLAGS="-Wno-error=unused-variable"
           make VERBOSE=1 STOP_ON_WARNING=0
-          make install
+          sudo make install
         shell: bash
         env:
           OIIO_PYTHON_VERSION: ${{ matrix.python_version_major }}.${{ matrix.python_version_minor }}
