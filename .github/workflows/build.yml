@@ -70,7 +70,7 @@ jobs:
         cd ../build/lib
         ls -lah
         echo "oiio/build/lib/python"
-        cd ../build/lib/python
+        cd python
         ls -lah
       shell: bash
     - name: Copy files into oiio Python package
