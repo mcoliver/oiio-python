@@ -62,6 +62,7 @@ jobs:
         run: |
           cp oiio/build/lib/python/site-packages/*.so src/python/oiio
       - name: Build wheel
+        id: build-wheel
         run: |
           mkdir ${GITHUB_WORKSPACE}/artifacts
           export DIST_DIR="${GITHUB_WORKSPACE}/artifacts"
@@ -80,13 +81,13 @@ jobs:
           sudo apt-get install jq;
           RELEASE_ID=$(jq --raw-output '.release.id' $GITHUB_EVENT_PATH);
           echo ::set-output name=upload-url::https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/assets
-      - name: Uplopad Release Asset
+      - name: Upload Release Asset
         id: upload-release-asset
         uses: actions/upload-release-asset@v1.0.1
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
             upload_url: ${{ steps.gen-upload-url.outputs.upload-url }}?name=${{ steps.build-zip.outputs.asset-name }}
-            asset_path: ${{ steps.build-zip.outputs.asset-path }}
-            asset_name: ${{ steps.build-zip.outputs.asset-name }}
+            asset_path: ${{ steps.build-wheel.outputs.asset-path }}
+            asset_name: ${{ steps.build-wheel.outputs.asset-name }}
             asset_content_type: application/zip
