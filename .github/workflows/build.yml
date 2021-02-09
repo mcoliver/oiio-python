@@ -45,8 +45,6 @@ jobs:
           git checkout "v${{ matrix.oiio_version }}"
           mkdir build
           cd build
-          export CFLAGS=-Werror=unused-variable
-          export CXXFLAGS=-Werror=unused-variable
           cmake .. -DCMAKE_CXX_FLAGS="-Wno-error=unused-variable"
           make VERBOSE=1 STOP_ON_WARNING=0
           sudo make install
@@ -61,23 +59,53 @@ jobs:
           sed -i'' 's/PYTHON_VERSION/${{ matrix.python_version_major }}.${{ matrix.python_version_minor }}/g' setup.py
           sed -i'' 's/OS_NAME/Microsoft :: POSIX :: Linux/g' setup.py
           cat setup.py
+          mkdir ${GITHUB_WORKSPACE}/artifacts
       - name: Copy files into oiio Python package
         run: |
           cp oiio/build/lib/python/site-packages/*.so src/python/oiio
+      # - name: Python wheels manylinux build
+      #   uses: RalfG/python-wheels-manylinux-build@v0.3.3
+      #   with:
+      #     python-versions: 'cp37-cp37m'
+      #     package-path: 'src/python'
+      #     pip-wheel-args: '-w /github/workspace/artifacts'
+      - name: Copy Files To Zip
+        run: |
+          SOURCE="oiio/build"
+          DEST="${GITHUB_WORKSPACE}/artifacts"
+          INSTALL_ROOT="/usr/local"
+
+          if [ ! -d $DEST ]; then
+              mkdir $DEST
+          fi
+
+          for file in $(find $SOURCE -type f ); do
+              echo "$file"
+              echo "  ${file/$SOURCE/}"
+              src_file="${file/$SOURCE/}"
+              if [ -f $INSTALL_ROOT$src_file ]; then
+                  cp $INSTALL_ROOT$src_file --parents $DEST
+              fi
+          done
+
       - name: Build wheel
         id: build-wheel
         run: |
-          mkdir ${GITHUB_WORKSPACE}/artifacts
           export DIST_DIR="${GITHUB_WORKSPACE}/artifacts"
           cd src/python
           python${{ matrix.python_version_major }}.${{ matrix.python_version_minor }} -m pip install -U pip
           pip${{ matrix.python_version_major }}.${{ matrix.python_version_minor }} install -U setuptools wheel auditwheel
           python3 setup.py bdist_wheel --python-tag=cp${{ matrix.python_version_major }}${{ matrix.python_version_minor }} --plat-name=linux_x86_64 --dist-dir="$DIST_DIR"
           cd $DIST_DIR
+          echo "Dest Dir"
           ls -lah
-          auditwheel repair "oiio-${{ matrix.oiio_version }}-cp${{ matrix.python_version_major }}${{ matrix.python_version_minor }}-none-linux_x86_64.whl
-          echo ::set-output name=asset-name::oiio-${{ matrix.oiio_version }}-cp${{ matrix.python_version_major }}${{ matrix.python_version_minor }}-none-linux_x86_64.whl
-          echo ::set-output name=asset-path::${GITHUB_WORKSPACE}/artifacts/oiio-${{ matrix.oiio_version }}-cp${{ matrix.python_version_major }}${{ matrix.python_version_minor }}-none-linux_x86_64.whl
+          # echo "auditwheel"
+          # auditwheel repair "oiio-${{ matrix.oiio_version }}-py${{ matrix.python_version_major }}-none-any.whl"
+          # auditwheel repair "oiio-${{ matrix.oiio_version }}-cp${{ matrix.python_version_major }}${{ matrix.python_version_minor }}-none-linux_x86_64.whl"
+          ls -lah
+          zip -r "oiio-${{ matrix.oiio_version }}-py${{ matrix.python_version_major }}.zip" ./*
+          echo ::set-output name=asset-name::oiio-${{ matrix.oiio_version }}-py${{ matrix.python_version_major }}.zip
+          echo ::set-output name=asset-path::${GITHUB_WORKSPACE}/artifacts/oiio-${{ matrix.oiio_version }}-py${{ matrix.python_version_major }}.zip
       - name: Generate Upload URL
         id: gen-upload-url
         run: |
