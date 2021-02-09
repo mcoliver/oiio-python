@@ -1,0 +1,44 @@
+# Build openimageio for python
+
+on:
+  push:
+
+  workflow_dispatch:
+
+
+jobs:
+
+  linux:
+    runs-on: ubuntu-16.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: "3.7"
+
+    # Build oiio
+    - name: Build oiio
+      run: |
+        sudo apt-get install libboost-all-dev
+        sudo apt-get install libjpeg-dev
+        sudo apt-get install zlib1g-dev
+        sudo apt-get install libpng-dev
+        sudo apt-get install libtiff-dev
+        sudo apt-get install libopenexr-dev
+        git clone https://github.com/OpenImageIO/oiio.git
+        pip3 install "pybind11[global]"
+        pip3 install numpy
+        cd oiio
+        make
+      shell: bash
+      env:
+        OIIO_PYTHON_VERSION: "3.7"
+
+
+    - name: Show contents
+      run: |
+        ls -lah
+        cd dist
+        ls -lah
+      shell: bash
