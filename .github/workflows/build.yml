@@ -37,8 +37,8 @@ jobs:
         git checkout v2.2.10.0
         mkdir build
         cd build
-        export CFLAGS=-Wno-unused-function
-        export CXXFLAGS=-Wno-unused-function
+        export CFLAGS=-Werror=unused-variable
+        export CXXFLAGS=-Werror=unused-variable
         cmake ..
         gcc --version
         make VERBOSE=1 STOP_ON_WARNING=0
