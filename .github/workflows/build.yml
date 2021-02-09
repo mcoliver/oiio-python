@@ -31,7 +31,7 @@ jobs:
         pip3 install "pybind11[global]"
         pip3 install numpy
         cd oiio
-        git checkout v2.2.11.1
+        git checkout v2.2.10.0
         gcc --version
         make VERBOSE=1 STOP_ON_WARNING=0
       shell: bash
