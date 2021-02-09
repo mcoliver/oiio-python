@@ -1,6 +1,9 @@
 # Build openimageio for python
 
-on:
+on: 
+  pull_request:
+    branches:
+      - release
   release:
     types: [published]
 
