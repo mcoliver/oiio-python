@@ -39,7 +39,7 @@ jobs:
         cd build
         export CFLAGS=-Werror=unused-variable
         export CXXFLAGS=-Werror=unused-variable
-        cmake ..
+        cmake .. -DCMAKE_CXX_FLAGS="-Wno-error=unused-variable"
         gcc --version
         make VERBOSE=1 STOP_ON_WARNING=0
       shell: bash
