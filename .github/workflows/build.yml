@@ -58,8 +58,13 @@ jobs:
       run: |
         ls -lah
         cd oiio
+        echo "oiio"
         ls -lah
+        cd build
+        echo "oiio/build"
+        ls -lah 
         cd dist
+        echo "oiio/build/dist"
         ls -lah
       shell: bash
     - name: Copy files into oiio Python package
