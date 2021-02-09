@@ -35,6 +35,9 @@ jobs:
         pip3 install numpy
         cd oiio
         git checkout v2.2.10.0
+        mkdir build
+        cd build
+        cmake ..
         gcc --version
         make VERBOSE=1 STOP_ON_WARNING=0
       shell: bash
