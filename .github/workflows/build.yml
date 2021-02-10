@@ -47,8 +47,8 @@ jobs:
           mkdir build
           cd build
           cmake .. -DCMAKE_CXX_FLAGS="-Wno-error=unused-variable"
-          make VERBOSE=1 STOP_ON_WARNING=0
-          sudo make install
+          make VERBOSE=1 STOP_ON_WARNING=0 LINKSTATIC=1
+          sudo make install 
         shell: bash
         env:
           OIIO_PYTHON_VERSION: ${{ matrix.python_version_major }}.${{ matrix.python_version_minor }}
