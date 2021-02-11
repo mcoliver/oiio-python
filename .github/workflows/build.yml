@@ -91,6 +91,7 @@ jobs:
                   fi
               done
           done
+          cp oiio/build/lib/python/site-packages/OpenImageIO.so $DEST/lib/python3.7/site-packages/OpenImageIO.so
 
       - name: Build wheel
         id: build-wheel
