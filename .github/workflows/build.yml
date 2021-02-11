@@ -35,7 +35,6 @@ jobs:
           sudo apt-get install libtiff-dev
           sudo apt-get install libopenexr-dev
           sudo apt-get install libraw-dev
-          sudo apt-get install tree
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
           sudo apt-get update -y
           sudo apt-get install g++-7 -y
@@ -79,8 +78,7 @@ jobs:
           if [ ! -d $DEST ]; then
               mkdir $DEST
           fi
-          # tree oiio
-          
+
           for root in $SOURCE/bin $SOURCE/lib $SOURCE/include; do
               for file in $(find $root -type f ); do
                   echo "$file"
