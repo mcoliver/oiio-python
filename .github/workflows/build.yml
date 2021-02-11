@@ -35,6 +35,7 @@ jobs:
           sudo apt-get install libtiff-dev
           sudo apt-get install libopenexr-dev
           sudo apt-get install libraw-dev
+          sudo apt-get install tree
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
           sudo apt-get update -y
           sudo apt-get install g++-7 -y
@@ -46,8 +47,8 @@ jobs:
           mkdir build
           cd build
           cmake .. -DCMAKE_CXX_FLAGS="-Wno-error=unused-variable"
-          make VERBOSE=1 STOP_ON_WARNING=0
-          sudo make install
+          make VERBOSE=1 STOP_ON_WARNING=0 LINKSTATIC=1
+          sudo make install 
         shell: bash
         env:
           OIIO_PYTHON_VERSION: ${{ matrix.python_version_major }}.${{ matrix.python_version_minor }}
@@ -78,15 +79,19 @@ jobs:
           if [ ! -d $DEST ]; then
               mkdir $DEST
           fi
-
-          for file in $(find $SOURCE -type f ); do
-              echo "$file"
-              echo "  ${file/$SOURCE/}"
-              src_file="${file/$SOURCE/}"
-              if [ -f $INSTALL_ROOT$src_file ]; then
-                  cp $INSTALL_ROOT$src_file --parents $DEST
-              fi
+          tree oiio
+          
+          for root in $SOURCE/bin $SOURCE/lib $SOURCE/include; do
+              for file in $(find $root -type f ); do
+                  echo "$file"
+                  echo "  ${file/$SOURCE/}"
+                  src_file="${file/$SOURCE/}"
+                  if [ -f $INSTALL_ROOT$src_file ]; then
+                      cp $INSTALL_ROOT$src_file --parents $DEST
+                  fi
+              done
           done
+          cp oiio/build/lib/python/site-packages/OpenImageIO.so $DEST/lib/python3.7/site-packages/OpenImageIO.so
 
       - name: Build wheel
         id: build-wheel
