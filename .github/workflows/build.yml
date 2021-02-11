@@ -35,7 +35,6 @@ jobs:
           sudo apt-get install libtiff-dev
           sudo apt-get install libopenexr-dev
           sudo apt-get install libraw-dev
-          sudo apt-get install tree
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
           sudo apt-get update -y
           sudo apt-get install g++-7 -y
@@ -79,19 +78,23 @@ jobs:
           if [ ! -d $DEST ]; then
               mkdir $DEST
           fi
-          tree oiio
-          
+
           for root in $SOURCE/bin $SOURCE/lib $SOURCE/include; do
               for file in $(find $root -type f ); do
                   echo "$file"
-                  echo "  ${file/$SOURCE/}"
                   src_file="${file/$SOURCE/}"
-                  if [ -f $INSTALL_ROOT$src_file ]; then
-                      cp $INSTALL_ROOT$src_file --parents $DEST
+                  if [ -f $INSTALL_ROOT/$src_file ]; then
+                      echo "$INSTALL_ROOT/$src_file  -> $DEST"
+                      cp $INSTALL_ROOT/$src_file --parents $DEST
                   fi
               done
           done
-          cp oiio/build/lib/python/site-packages/OpenImageIO.so $DEST/lib/python3.7/site-packages/OpenImageIO.so
+          mkdir -p $DEST/lib/python3.7/site-packages
+          if [ -f $INSTALL_ROOT/lib/python3.7/site-packages/OpenImageIO.so ]; then
+              cp $INSTALL_ROOT/lib/python3.7/site-packages/OpenImageIO.so $DEST/lib/python3.7/site-packages/OpenImageIO.so
+          else
+            cp oiio/build/lib/python/site-packages/OpenImageIO.so $DEST/lib/python3.7/site-packages/OpenImageIO.so
+          fi
 
       - name: Build wheel
         id: build-wheel
