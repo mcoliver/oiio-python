@@ -89,7 +89,12 @@ jobs:
                   fi
               done
           done
-          cp oiio/build/lib/python/site-packages/OpenImageIO.so $DEST/lib/python3.7/site-packages/OpenImageIO.so
+          mkdir -p $DEST/lib/python3.7/site-packages
+          if [ -f $INSTALL_ROOT/lib/python3.7/site-packages/OpenImageIO.so ]; then
+              cp $INSTALL_ROOT/lib/python3.7/site-packages/OpenImageIO.so $DEST/lib/python3.7/site-packages/OpenImageIO.so
+          else
+            cp oiio/build/lib/python/site-packages/OpenImageIO.so $DEST/lib/python3.7/site-packages/OpenImageIO.so
+          fi
 
       - name: Build wheel
         id: build-wheel
