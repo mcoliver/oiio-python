@@ -79,15 +79,15 @@ jobs:
           if [ ! -d $DEST ]; then
               mkdir $DEST
           fi
-          tree oiio
+          # tree oiio
           
           for root in $SOURCE/bin $SOURCE/lib $SOURCE/include; do
               for file in $(find $root -type f ); do
                   echo "$file"
-                  echo "  ${file/$SOURCE/}"
                   src_file="${file/$SOURCE/}"
-                  if [ -f $INSTALL_ROOT$src_file ]; then
-                      cp $INSTALL_ROOT$src_file --parents $DEST
+                  if [ -f $INSTALL_ROOT/$src_file ]; then
+                      echo "$INSTALL_ROOT/$src_file  -> $DEST"
+                      cp $INSTALL_ROOT/$src_file --parents $DEST
                   fi
               done
           done
