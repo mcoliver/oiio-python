@@ -18,7 +18,7 @@ jobs:
       matrix:
         python_version_major: ['3']
         python_version_minor: ['7']
-        os: ['ubuntu-16.04']
+        os: ['ubuntu-18.04']
         oiio_version: ["2.3.16.0"]
     steps:
       - uses: actions/checkout@v2

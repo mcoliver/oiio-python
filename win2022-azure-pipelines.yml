@@ -79,7 +79,7 @@ jobs:
   # Install Python Interpreter to default location
   # We have to do this because pybind11 currently can't find the
   # Azure-provided Python:
-  # Could NOT find PythonInterp (missing: PYTHON_EXECUTABLE) (Required is at least version "3.7")
+  # Could NOT find PythonInterp (missing: PYTHON_EXECUTABLE) (Required is at least version "3.9")
   # Fore more info, see issue #7:
   # https://github.com/fredrikaverpil/oiio-python/issues/7#issuecomment-458042455
   - powershell: |

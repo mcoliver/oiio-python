@@ -31,8 +31,8 @@ cd ../
 if [ ! -d oiio ]; then
     git clone https://github.com/OpenImageIO/oiio.git
 fi
-pip3.7 install pybind11[global]
-pip3.7 install numpy
+pip3.9 install pybind11[global]
+pip3.9 install numpy
 
 
 cd oiio
