@@ -19,7 +19,7 @@ jobs:
         python_version_major: ['3']
         python_version_minor: ['7']
         os: ['ubuntu-16.04']
-        oiio_version: ["2.2.10.0"]
+        oiio_version: ["2.3.16.0"]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -89,11 +89,11 @@ jobs:
                   fi
               done
           done
-          mkdir -p $DEST/lib/python3.7/site-packages
-          if [ -f $INSTALL_ROOT/lib/python3.7/site-packages/OpenImageIO.so ]; then
-              cp $INSTALL_ROOT/lib/python3.7/site-packages/OpenImageIO.so $DEST/lib/python3.7/site-packages/OpenImageIO.so
+          mkdir -p $DEST/lib/python3.9/site-packages
+          if [ -f $INSTALL_ROOT/lib/python3.9/site-packages/OpenImageIO.so ]; then
+              cp $INSTALL_ROOT/lib/python3.9/site-packages/OpenImageIO.so $DEST/lib/python3.9/site-packages/OpenImageIO.so
           else
-            cp oiio/build/lib/python/site-packages/OpenImageIO.so $DEST/lib/python3.7/site-packages/OpenImageIO.so
+            cp oiio/build/lib/python/site-packages/OpenImageIO.so $DEST/lib/python3.9/site-packages/OpenImageIO.so
           fi
 
       - name: Build wheel

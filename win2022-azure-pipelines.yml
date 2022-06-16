@@ -19,11 +19,11 @@ jobs:
 
   variables:
     python.version: '$(python.version_major).$(python.version_minor)'
-    azure.vm_image: 'vs2017-win2016'
+    azure.vm_image: 'vs2019-win2022'
     src.python: '$(Agent.BuildDirectory)/s/src/python'
     src.vcpkg: '$(Agent.BuildDirectory)/s/src/vcpkg'
     tests: '$(Agent.BuildDirectory)/s/tests'
-    oiio.version: '2.2.11.1'
+    oiio.version: '2.3.16.0'
     pypackage.os_name: 'Microsoft :: Windows'
 
   pool:
@@ -84,9 +84,9 @@ jobs:
   # https://github.com/fredrikaverpil/oiio-python/issues/7#issuecomment-458042455
   - powershell: |
       choco install python --version $(python.version).$(python.version_patch)
-      if (Test-Path "C:/Python37/python.exe") { echo "PYTHON INTERPRETER FOUND!" }
-    condition: eq(variables['python.version'], '3.7')
-    displayName: 'Workaround: Install Python 3.7 Interpreter'
+      if (Test-Path "C:/Python39/python.exe") { echo "PYTHON INTERPRETER FOUND!" }
+    condition: eq(variables['python.version'], '3.9')
+    displayName: 'Workaround: Install Python 3.9 Interpreter'
 
   # Install pybind11 via vcpkg
   - powershell: |
@@ -99,9 +99,9 @@ jobs:
 
   # Uninstall Python Interpreter
   - powershell: |
-      if (Test-Path "C:/Python37/python.exe") { choco uninstall python -y --version $(python.version).$(python.version_patch) }
-    condition: eq(variables['python.version'], '3.7')
-    displayName: 'Workaround: Uninstall Python 3.7 Interpreter'
+      if (Test-Path "C:/Python39/python.exe") { choco uninstall python -y --version $(python.version).$(python.version_patch) }
+    condition: eq(variables['python.version'], '3.9')
+    displayName: 'Workaround: Uninstall Python 3.9 Interpreter'
 
   # Install oiio prerequisites via vcpkg
   - powershell: |
@@ -189,7 +189,7 @@ jobs:
   - task: GithubRelease@0
     inputs:
       gitHubConnection: 'oiio-python-releases'
-      repositoryName: 'ArchPlatform/oiio-python'
+      repositoryName: 'mcoliver/oiio-python'
       action: 'edit' # Options: create, edit, discard
       target: '$(build.sourceVersion)' # Required when action == create || action == edit
       tagSource: 'Git tag' # Required when action == create. Options: auto, manual

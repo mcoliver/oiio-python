@@ -17,6 +17,10 @@ jobs:
         python.version_major: '3'
         python.version_minor: '7'
         python.version_patch: '0'
+      macos-py39:
+        python.version_major: '3'
+        python.version_minor: '9'
+        python.version_patch: '13'
 
   variables:
     python.version: '$(python.version_major).$(python.version_minor)'
@@ -25,7 +29,7 @@ jobs:
     src.vcpkg: '$(Agent.BuildDirectory)/s/src/vcpkg'
     tests: '$(Agent.BuildDirectory)/s/tests'
     install.vcpkg: $(Agent.BuildDirectory)/s/vcpkg
-    oiio.version: '2.2.11.1'
+    oiio.version: '2.3.16.0'
     pypackage.os_name: 'Microsoft :: MacOS'
 
   pool:
@@ -153,7 +157,7 @@ jobs:
   - task: GithubRelease@0
     inputs:
       gitHubConnection: 'oiio-python-releases'
-      repositoryName: 'ArchPlatform/oiio-python'
+      repositoryName: 'mcoliver/oiio-python'
       action: 'edit' # Options: create, edit, discard
       target: '$(build.sourceVersion)' # Required when action == create || action == edit
       tagSource: 'Git tag' # Required when action == create. Options: auto, manual

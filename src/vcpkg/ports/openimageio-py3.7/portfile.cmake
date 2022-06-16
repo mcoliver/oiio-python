@@ -3,7 +3,7 @@ include(vcpkg_common_functions)
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO OpenImageIO/oiio
-    REF v2.2.11.1
+    REF v2.3.16.0
     SHA512 1
     HEAD_REF master
     PATCHES

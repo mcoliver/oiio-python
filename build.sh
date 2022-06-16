@@ -1,13 +1,13 @@
 set -ex
-OIIO_VERSION="2.2.11.1"
+OIIO_VERSION="2.3.16.0"
 
 sudo yum install -y libjpeg-turbo-devel zlib-devel libpng-devel libtiff-devel OpenEXR-devel LibRaw-devel cmake3
 
 
-# -I/usr/local/include/python3.7m -I/usr/local/include/python3.7m
-# -lpython3.7m -lcrypt -lpthread -ldl  -lutil -lm 
+# -I/usr/local/include/python3.9m -I/usr/local/include/python3.9m
+# -lpython3.9m -lcrypt -lpthread -ldl  -lutil -lm
 
-export CPLUS_INCLUDE_PATH="$CPLUS_INCLUDE_PATH:/usr/local/include/python3.7m"
+export CPLUS_INCLUDE_PATH="$CPLUS_INCLUDE_PATH:/usr/local/include/python3.9m"
 export CPATH="$CPATH:/usr/include:/usr/local/include"
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/lib:/usr/lib64:/usr/local/lib:/usr/local/lib64"
 if [ ! -f boost_1_67_0.tar.gz ]; then
@@ -37,7 +37,7 @@ pip3.7 install numpy
 
 cd oiio
 git checkout "v${OIIO_VERSION}"
-if [ ! -d build ]; then 
+if [ ! -d build ]; then
     mkdir build
 fi
 
