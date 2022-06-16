@@ -1,5 +1,7 @@
 set -ex
 OIIO_VERSION="2.3.16.0"
+BOOST_VERSION="1_76_0"
+BOOST_VER_DOT="1.7.6"
 
 sudo yum install -y libjpeg-turbo-devel zlib-devel libpng-devel libtiff-devel OpenEXR-devel LibRaw-devel cmake3
 
@@ -10,17 +12,17 @@ sudo yum install -y libjpeg-turbo-devel zlib-devel libpng-devel libtiff-devel Op
 export CPLUS_INCLUDE_PATH="$CPLUS_INCLUDE_PATH:/usr/local/include/python3.9m"
 export CPATH="$CPATH:/usr/include:/usr/local/include"
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/lib:/usr/lib64:/usr/local/lib:/usr/local/lib64"
-if [ ! -f boost_1_67_0.tar.gz ]; then
-    wget https://dl.bintray.com/boostorg/release/1.67.0/source/boost_1_67_0.tar.gz
+if [ ! -f boost_${BOOST_VERSION}.tar.gz ]; then
+    wget https://boostorg.jfrog.io/artifactory/main/release/${BOOST_VER_DOT}/source/boost_${BOOST_VERSION}.tar.gz
 fi
-if [ ! -d boost_1_67_0 ]; then
-    tar -xzf boost_1_*
+if [ ! -d boost_${BOOST_VERSION} ]; then
+    tar -xzf boost_${BOOST_VERSION}.tar.gz
 fi
 if [ ! -d /opt/boost ]; then
    sudo mkdir /opt/boost
     sud o chmod -R 777 /opt/boost
 fi
-cd boost_1_*
+cd boost_${BOOST_VERSION}
 sudo ./bootstrap.sh --prefix=/opt/boost
 sudo ./b2 install --prefix=/opt/boost --with=all -j4
 cd ../
